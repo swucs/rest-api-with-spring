@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -142,21 +144,24 @@ class EventControllerTest {
         ;
     }
 
-    @Test
-    public void testOffline() {
+    @ParameterizedTest()
+    @MethodSource("paramsForTestOffline")
+    public void testOffline(String location, boolean isOffline) {
         Event event = Event.builder()
-                .location("강남역")
+                .location(location)
                 .build();
 
         event.update();
 
-        assertThat(event.isOffline()).isTrue();
+        assertThat(event.isOffline()).isEqualTo(isOffline);
 
-        event = Event.builder()
-                .build();
+    }
 
-        event.update();
-
-        assertThat(event.isOffline()).isFalse();
+    private static Object[] paramsForTestOffline() {
+        return new Object[] {
+                new Object[] {"강남역", true}
+                , new Object[] {null, false}
+                , new Object[] {"    ", false}
+        };
     }
 }
