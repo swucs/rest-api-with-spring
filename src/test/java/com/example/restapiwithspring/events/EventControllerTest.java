@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -58,11 +59,9 @@ class EventControllerTest {
                 .andExpect(header().exists(HttpHeaders.LOCATION))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("id").value(Matchers.not(100)))
-                .andExpect(jsonPath("free").value(Matchers.not(true)))
+                .andExpect(jsonPath("free").value(false))
+                .andExpect(jsonPath("offline").value(true))
                 .andExpect(jsonPath("eventStatus").value(Matchers.not(EventStatus.PUBLISHED)));
-
-
-
     }
 
 
@@ -141,5 +140,23 @@ class EventControllerTest {
                 .andExpect(jsonPath("$[0].code").exists())
                 .andExpect(jsonPath("$[0].rejectedValue").exists())
         ;
+    }
+
+    @Test
+    public void testOffline() {
+        Event event = Event.builder()
+                .location("강남역")
+                .build();
+
+        event.update();
+
+        assertThat(event.isOffline()).isTrue();
+
+        event = Event.builder()
+                .build();
+
+        event.update();
+
+        assertThat(event.isOffline()).isFalse();
     }
 }
