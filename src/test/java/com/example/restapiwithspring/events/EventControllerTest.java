@@ -93,7 +93,42 @@ class EventControllerTest {
                 .andExpect(status().isBadRequest())
                 ;
 
+    }
 
+    @Test
+    public void createEventBadRequestEmptyInput() throws Exception {
+        EventDto eventDto = EventDto.builder().build();
 
+        this.mockMvc.perform(post("/api/events")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF8")
+                    .content(this.objectMapper.writeValueAsString(eventDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                ;
+    }
+
+    @Test
+    public void createEventBadRequestWrongInput() throws Exception {
+        EventDto eventDto = EventDto.builder()
+                .name("spring")
+                .description("description")
+                .beginEnrollmentDateTime(LocalDateTime.of(2018, 11, 12, 19, 0, 0))
+                .closeEnrollmentDateTime(LocalDateTime.of(2018, 11, 11, 19, 0, 0))
+                .beginEventDateTime(LocalDateTime.of(2018, 11, 11, 19, 0, 0))
+                .endEventDateTime(LocalDateTime.of(2018, 11, 11, 19, 0, 0))
+                .basePrice(100)
+                .maxPrice(50)
+                .limitOfEnrollment(100)
+                .location("강남역")
+                .build();
+
+        this.mockMvc.perform(post("/api/events")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF8")
+                .content(this.objectMapper.writeValueAsString(eventDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+        ;
     }
 }

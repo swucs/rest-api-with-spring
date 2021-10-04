@@ -61,6 +61,13 @@
             <artifactId>modelmapper</artifactId>
             <version>2.3.1</version>
         </dependency>
+
+        <!-- spring-boot-starter-web 에 더이상 validation을 포함하지 않으므로 따로 디펜던시를 추가해야 한다.-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>2.2.6.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>
