@@ -3,6 +3,7 @@ package com.example.restapiwithspring.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,6 +31,7 @@ class EventControllerTest {
     ObjectMapper objectMapper;
 
     @Test
+    @DisplayName("정상적으로 이벤트를 생성하는 테스트")
     public void createEvent() throws Exception {
 
         EventDto eventDto = EventDto.builder()
@@ -96,6 +98,7 @@ class EventControllerTest {
     }
 
     @Test
+    @DisplayName("입력값이 비어있는 경우 에러발생하는 테스트")
     public void createEventBadRequestEmptyInput() throws Exception {
         EventDto eventDto = EventDto.builder().build();
 
@@ -109,14 +112,17 @@ class EventControllerTest {
     }
 
     @Test
+    @DisplayName("입력값이 문제가 있는 경우 에러발생하는 테스트")
     public void createEventBadRequestWrongInput() throws Exception {
         EventDto eventDto = EventDto.builder()
                 .name("spring")
                 .description("description")
+                //시작일이 종료일보다 늦은 시간이면 안됨.
                 .beginEnrollmentDateTime(LocalDateTime.of(2018, 11, 12, 19, 0, 0))
                 .closeEnrollmentDateTime(LocalDateTime.of(2018, 11, 11, 19, 0, 0))
                 .beginEventDateTime(LocalDateTime.of(2018, 11, 11, 19, 0, 0))
                 .endEventDateTime(LocalDateTime.of(2018, 11, 11, 19, 0, 0))
+                //basePrice > maxprice보다 크면 안됨
                 .basePrice(100)
                 .maxPrice(50)
                 .limitOfEnrollment(100)
