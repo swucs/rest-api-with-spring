@@ -1,5 +1,6 @@
 package com.example.restapiwithspring.events;
 
+import com.example.restapiwithspring.index.IndexController;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -16,6 +17,7 @@ import javax.validation.Valid;
 import java.net.URI;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 @Controller
@@ -36,12 +38,12 @@ public class EventController {
     public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
 
         if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().body(errors);
+            return badRequest(errors);
         }
 
         eventValidator.validate(eventDto, errors);
         if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().body(errors);
+            return badRequest(errors);
         }
 
         Event event = modelMapper.map(eventDto, Event.class);
@@ -58,5 +60,12 @@ public class EventController {
         entityModel.add(Link.of("/docs/index.html#resources-events-create").withRel("profile"));
 
         return ResponseEntity.created(createdUri).body(entityModel);
+    }
+
+
+    private ResponseEntity badRequest(Errors errors) {
+        EntityModel<Errors> entityModel = EntityModel.of(errors);
+        entityModel.add(linkTo(methodOn(IndexController.class).index()).withRel("index"));  //error를 그냥 던지는것이 아니고 index 링크 추가한다.
+        return ResponseEntity.badRequest().body(entityModel);
     }
 }
