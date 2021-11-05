@@ -1,8 +1,8 @@
 package com.example.restapiwithspring.events;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface EventRepository extends CrudRepository<Event, Integer> {
+public interface EventRepository extends JpaRepository<Event, Integer> {
 
 
 }
